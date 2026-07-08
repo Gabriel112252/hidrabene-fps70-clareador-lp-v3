@@ -984,6 +984,20 @@
       if(!open) item.classList.add('open');
     }
 
+    // Repassa as UTMs da página atual pro link de checkout (Yampi não herda automaticamente)
+    function withUtms(url) {
+      try {
+        var u = new URL(url);
+        var current = new URLSearchParams(window.location.search);
+        current.forEach(function(value, key) {
+          if (!u.searchParams.has(key)) u.searchParams.set(key, value);
+        });
+        return u.toString();
+      } catch (e) {
+        return url;
+      }
+    }
+
     // Checkout — Yampi: um link próprio por kit (preço/oferta já configurados na Yampi)
     var CHECKOUT_URLS = {
       '1-unidade':  'https://hidrabene.pay.yampi.com.br/r/FQH20J70UC',
@@ -992,7 +1006,7 @@
     };
     function comprarAgora(kit){
       var url = CHECKOUT_URLS[kit];
-      if(url){ window.location.href = url; return; }
+      if(url){ window.location.href = withUtms(url); return; }
       alert('Protetor Solar Facial FPS 70 Clareador' + (kit ? '\nOpção: ' + kit : '') + '\n\nLink de checkout não configurado para esta opção.');
     }
     function comprarSelecionado(){ comprarAgora(kitSelecionado); }
